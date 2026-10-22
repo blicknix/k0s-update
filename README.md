@@ -54,3 +54,15 @@ downloadURLs:
 ```
 
 So each channel can offer only single version to k0s autopilot client. In general the design pattern here is that each major.minor version will have their own channel where the latest patch release is offered.
+
+## Automation
+
+`.github/workflows/update-channels.yaml` regenerates all `index.yaml` files from published
+k0s releases (checksums from each release's `sha256sums.txt`) and opens a PR. It runs on:
+
+- `repository_dispatch` (`k0s-release`), sent by k0s' `publish-docs.yml` when a release is published
+- every 6 hours as a fallback
+- manually via *Run workflow*
+
+`eolDate` is not derived from releases; set it by hand; it is kept as long as the file serves the same channel.
+Run locally: `GITHUB_TOKEN=$(gh auth token) ./scripts/update-channels.py`
